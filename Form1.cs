@@ -16,33 +16,6 @@ namespace MTsocketAPI_Chart
             InitializeComponent();
         }
 
-        //private async void BeginWork()
-        //{
-        //    while (true)
-        //    {
-        //        List<Position> result = await DoWork();
-
-        //        dataGridView1.Rows.Clear();
-        //        foreach (var item in result)
-        //            dataGridView1.Rows.Add(item.SYMBOL, item.TICKET, item.OPEN_TIME, item.TYPE, item.VOLUME, item.PRICE_OPEN, item.SL, item.TP, item.SWAP, item.PROFIT);
-        //        dataGridView1.AutoResizeColumns();
-        //    }
-        //}
-
-        //private async Task<List<Position>> DoWork()
-        //{
-        //    List<Position> lst = new List<Position>();
-        //    await Task.Run(() =>
-        //    {
-        //        if (mt5 != null)
-        //        {
-        //            System.Threading.Thread.Sleep(1000);
-        //            lst = mt5.GetOpenedOrders();
-        //        }
-        //    });
-        //    return lst;
-
-        //}
         private void Form1_Load(object sender, EventArgs e)
         {
             try
@@ -284,7 +257,6 @@ namespace MTsocketAPI_Chart
 
             //Fill TimeFrame list
             cmbTimeframe.DataSource = Enum.GetNames(typeof(TimeFrame));
-            // cmbTimeframe.SelectedIndex = 4;
 
             //Fill list with tradeable symbols
             cmbSymbols.DataSource = mt5.GetSymbolList().Where(x => x.TRADE_MODE != 0).Select(x => x.NAME).ToList();
