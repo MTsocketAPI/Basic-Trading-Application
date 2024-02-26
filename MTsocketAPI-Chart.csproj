@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows8.0</TargetFramework>
+    <RootNamespace>MTsocketAPI_Chart</RootNamespace>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="ScottPlot.WinForms" Version="4.1.67" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MTsocketAPI5">
+      <HintPath>MTsocketAPI5.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
