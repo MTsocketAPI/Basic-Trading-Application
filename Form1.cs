@@ -1,3 +1,12 @@
+/* 
+ 
+  Basic Trading Application Example (https://www.mtsocketapi.com)
+
+  Requirements:
+  - Metatrader5 running MTsocketAPI
+
+*/
+
 using MTsocketAPI.MT5;
 using ScottPlot;
 using ScottPlot.Plottable;
@@ -11,7 +20,6 @@ namespace MTsocketAPI_Chart
         FinancePlot? fnplot;
         CancellationTokenSource cts = new CancellationTokenSource();
         Thread? updateThread;
-
         public Form1()
         {
             InitializeComponent();
@@ -109,6 +117,7 @@ namespace MTsocketAPI_Chart
         }
         void UpdateOrderListLoop(CancellationTokenSource cancelTS)
         {
+            //Update opened order list every second
             do
             {
                 System.Threading.Thread.Sleep(1000);
@@ -186,7 +195,6 @@ namespace MTsocketAPI_Chart
             {
                 MessageBox.Show(ex.Message);
             }
-
         }
 
         private void btnBuy_Click(object sender, EventArgs e)
