@@ -67,6 +67,7 @@ namespace MTsocketAPI_Chart
 
                         this.formsPlot1.Invoke((EventHandler)delegate
                         {
+                            //Refresh chart
                             formsPlot1.Refresh();
                         });
                     }
