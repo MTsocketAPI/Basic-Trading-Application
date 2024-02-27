@@ -6,7 +6,8 @@ namespace MTsocketAPI_Chart
 {
     public partial class Form1 : Form
     {
-        MTsocketAPI.MT5.Terminal mt5;
+        Terminal? mt5;
+        Terminal? pos;
         FinancePlot? fnplot;
         CancellationTokenSource cts = new CancellationTokenSource();
         Thread? updateThread;
@@ -77,7 +78,7 @@ namespace MTsocketAPI_Chart
             }
         }
 
-        Terminal pos;
+        
         void UpdateOrderList()
         {
             //Fill datagridview with opened orders from Metatrader
@@ -158,23 +159,27 @@ namespace MTsocketAPI_Chart
 
                 TimeFrame tf = (TimeFrame)Enum.Parse(typeof(TimeFrame), cmbTimeframe.Text);
 
-                var rates = mt5.PriceHistory(cmbSymbols.Text, tf, DateTime.Now.AddHours(-12).AddMinutes(-TimeSpanFromTF(tf).TotalMinutes * 30), DateTime.Now.AddDays(1));
-
-                foreach (var item in rates)
+                if (mt5 != null)
                 {
-                    ScottPlot.OHLC candle = new OHLC(open: item.OPEN, high: item.HIGH, low: item.LOW, close: item.CLOSE, Convert.ToDateTime(item.TIME), TimeSpanFromTF(tf));
-                    prices.Add(candle);
+                    var rates = mt5.PriceHistory(cmbSymbols.Text, tf, DateTime.Now.AddHours(-12).AddMinutes(-TimeSpanFromTF(tf).TotalMinutes * 30), DateTime.Now.AddDays(1));
+
+                    foreach (var item in rates)
+                    {
+                        ScottPlot.OHLC candle = new OHLC(open: item.OPEN, high: item.HIGH, low: item.LOW, close: item.CLOSE, Convert.ToDateTime(item.TIME), TimeSpanFromTF(tf));
+                        prices.Add(candle);
+                    }
+
+                    prices.Reverse();
+
+                    fnplot = formsPlot1.Plot.AddCandlesticks(prices.ToArray());
+                    fnplot.YAxisIndex = formsPlot1.Plot.RightAxis.AxisIndex;
+
+                    mt5.TrackPrices(new List<string>() { cmbSymbols.Text });
+
+                    formsPlot1.Plot.AxisAuto();
+                    formsPlot1.Refresh();
                 }
-
-                prices.Reverse();
-
-                fnplot = formsPlot1.Plot.AddCandlesticks(prices.ToArray());
-                fnplot.YAxisIndex = formsPlot1.Plot.RightAxis.AxisIndex;
-
-                mt5.TrackPrices(new List<string>() { cmbSymbols.Text });
-
-                formsPlot1.Plot.AxisAuto();
-                formsPlot1.Refresh();
+                
             }
             catch (Exception ex)
             {
@@ -187,9 +192,11 @@ namespace MTsocketAPI_Chart
         {
             try
             {
-                TradeResult res = mt5.SendOrder(cmbSymbols.Text, (double)nVolume.Value, OrderType.ORDER_TYPE_BUY);
-                if (res != null) UpdateOrderList();
-
+                if (mt5 !=null)
+                {
+                    TradeResult res = mt5.SendOrder(cmbSymbols.Text, (double)nVolume.Value, OrderType.ORDER_TYPE_BUY);
+                    if (res != null) UpdateOrderList();
+                }
             }
             catch (Exception ex)
             {
@@ -202,8 +209,11 @@ namespace MTsocketAPI_Chart
         {
             try
             {
-                TradeResult res = mt5.SendOrder(cmbSymbols.Text, (double)nVolume.Value, OrderType.ORDER_TYPE_SELL);
-                if (res != null) UpdateOrderList();
+                if (mt5 != null)
+                {
+                    TradeResult res = mt5.SendOrder(cmbSymbols.Text, (double)nVolume.Value, OrderType.ORDER_TYPE_SELL);
+                    if (res != null) UpdateOrderList();
+                }
             }
             catch (Exception ex)
             {
@@ -219,8 +229,12 @@ namespace MTsocketAPI_Chart
             {
                 try
                 {
-                    TradeResult res = mt5.OrderClose(Convert.ToInt64(dataGridView1.Rows[e.RowIndex].Cells[1].Value));
-                    if (res != null) if (res.TYPE == "FULLY_CLOSED") dataGridView1.Rows.RemoveAt(e.RowIndex);
+                    if (mt5 != null) 
+                    {
+                        TradeResult res = mt5.OrderClose(Convert.ToInt64(dataGridView1.Rows[e.RowIndex].Cells[1].Value));
+                        if (res != null) if (res.TYPE == "FULLY_CLOSED") dataGridView1.Rows.RemoveAt(e.RowIndex);
+                    }
+
                 }
                 catch (Exception ex)
                 {
